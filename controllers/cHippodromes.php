@@ -35,6 +35,55 @@ switch ($action) {
         }
         break;
         
+    case 'supprimer':
+        $idHippodrome = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if ($idHippodrome) {
+            // Vérifier d'abord si l'hippodrome peut être supprimé
+            if (!hippodromePeutEtreSupprime($idHippodrome)) {
+                $nbCourses = obtenirNbCoursesHippodrome($idHippodrome);
+                header('Location: cHippodromes.php?message=Impossible de supprimer cet hippodrome : il y a ' . $nbCourses . ' course(s) associée(s)');
+                exit();
+            }
+            
+            if (supprimerHippodrome($idHippodrome)) {
+                header('Location: cHippodromes.php?message=Hippodrome supprimé avec succès');
+            } else {
+                header('Location: cHippodromes.php?message=Erreur lors de la suppression');
+            }
+            exit();
+        }
+        break;
+        
+    case 'modifier':
+        $idHippodrome = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if ($idHippodrome) {
+            $hippodrome = obtenirHippodromeParId($idHippodrome);
+            if ($hippodrome) {
+                include '../views/vModifierHippodrome.php';
+                exit();
+            }
+        }
+        header('Location: cHippodromes.php');
+        break;
+        
+    case 'mettreAJourHippodrome':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $idHippodrome = filter_input(INPUT_POST, 'hdIdHippodrome', FILTER_VALIDATE_INT);
+            $localisation = filter_input(INPUT_POST, 'txtLocalisation', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $capacite = filter_input(INPUT_POST, 'txtCapacite', FILTER_VALIDATE_INT);
+            
+            if ($idHippodrome && $localisation && $capacite) {
+                if (modifierHippodrome($idHippodrome, $localisation, $capacite)) {
+                    header('Location: cHippodromes.php?message=Hippodrome modifié avec succès');
+                } else {
+                    header('Location: cHippodromes.php?message=Erreur lors de la modification');
+                }
+                exit();
+            }
+        }
+        header('Location: cHippodromes.php');
+        break;
+        
     default:
         $hippodromes = obtenirHippodromes();
         include '../views/vHippodromes.php';

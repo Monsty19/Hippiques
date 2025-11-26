@@ -17,9 +17,11 @@
             border-radius: 3px; 
             margin: 2px;
             display: inline-block;
+            font-size: 14px;
         }
         .btn-primary { background: #007bff; }
         .btn-success { background: #28a745; }
+        .btn-warning { background: #ffc107; color: black; }
         .btn-danger { background: #dc3545; }
     </style>
 </head>
@@ -58,7 +60,7 @@
                 <?php endforeach; ?>
             </select>
         </div>
-        <input type="submit" value="Ajouter la course">
+        <input type="submit" value="Ajouter la course" class="btn btn-primary">
     </form>
     <?php endif; ?>
     
@@ -82,6 +84,14 @@
                 <?php if (isset($_SESSION['type_utilisateur']) && $_SESSION['type_utilisateur'] == 0): ?>
                     <a href="cCourses.php?action=saisirResultats&id=<?php echo $course['id_course']; ?>" class="btn btn-success">
                         Résultats
+                    </a>
+                    <a href="cCourses.php?action=modifierCourse&id=<?php echo $course['id_course']; ?>" class="btn btn-warning">
+                        Modifier
+                    </a>
+                    <a href="cCourses.php?action=supprimer&id=<?php echo $course['id_course']; ?>" 
+                       class="btn btn-danger" 
+                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette course ? Tous les participants et résultats seront également supprimés.')">
+                        Supprimer
                     </a>
                 <?php endif; ?>
             </td>

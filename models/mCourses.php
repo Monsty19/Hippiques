@@ -89,6 +89,50 @@ function creerParticipation($idCourse, $ifceCheval, $matriculeJockey, $numDossar
     return $requete->execute([$idCourse, $idEquipe, $numDossard]);
 }
 
+function supprimerParticipationsCourse($idCourse) {
+    $base = connecterBaseDeDonnees();
+    $requete = $base->prepare('DELETE FROM participe WHERE id_course = ?');
+    return $requete->execute([$idCourse]);
+}
 
+function supprimerCourse($idCourse) {
+    $base = connecterBaseDeDonnees();
+    
+    try {
+        $base->beginTransaction();
+        
+        // 1. Supprimer d'abord les participations
+        supprimerParticipationsCourse($idCourse);
+        
+        // 2. Supprimer la course
+        $requete = $base->prepare('DELETE FROM course WHERE id_course = ?');
+        $resultat = $requete->execute([$idCourse]);
+        
+        $base->commit();
+        return $resultat;
+        
+    } catch (Exception $e) {
+        $base->rollBack();
+        return false;
+    }
+}
 
+function supprimerParticipant($idCourse, $idEquipe) {
+    $base = connecterBaseDeDonnees();
+    $requete = $base->prepare('DELETE FROM participe WHERE id_course = ? AND id_equipe = ?');
+    return $requete->execute([$idCourse, $idEquipe]);
+}
+
+function modifierCourse($idCourse, $dateCourse, $idHippodrome) {
+    $base = connecterBaseDeDonnees();
+    $requete = $base->prepare('UPDATE course SET date_course = ?, id_hippodrome = ? WHERE id_course = ?');
+    return $requete->execute([$dateCourse, $idHippodrome, $idCourse]);
+}
+
+function obtenirCourseParId($idCourse) {
+    $base = connecterBaseDeDonnees();
+    $requete = $base->prepare('SELECT c.*, h.localisation_hippodrome FROM course c JOIN hippodrome h ON c.id_hippodrome = h.id_hippodrome WHERE c.id_course = ?');
+    $requete->execute([$idCourse]);
+    return $requete->fetch(PDO::FETCH_ASSOC);
+}
 ?>

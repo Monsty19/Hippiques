@@ -10,12 +10,28 @@
         th { background-color: #f2f2f2; }
         .form-group { margin: 10px 0; }
         label { display: inline-block; width: 150px; }
+        .btn { 
+            padding: 5px 10px; 
+            text-decoration: none; 
+            color: white; 
+            border-radius: 3px; 
+            margin: 2px;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-primary { background: #007bff; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; }
     </style>
 </head>
 <body>
     <?php include 'vMenu.php'; ?>
     
     <h1>Chevaux</h1>
+    
+    <?php if (isset($_GET['message'])): ?>
+        <p style="color: green;"><?php echo htmlspecialchars($_GET['message']); ?></p>
+    <?php endif; ?>
     
     <?php if (isset($message)): ?>
         <p style="color: green;"><?php echo $message; ?></p>
@@ -40,7 +56,7 @@
             <label for="txtRace">Race :</label>
             <input type="text" id="txtRace" name="txtRace" required>
         </div>
-        <input type="submit" value="Ajouter">
+        <input type="submit" value="Ajouter" class="btn btn-primary">
     </form>
     
     <h2>Liste des chevaux</h2>
@@ -50,6 +66,7 @@
             <th>Nom</th>
             <th>Date de naissance</th>
             <th>Race</th>
+            <th>Actions</th>
         </tr>
         <?php foreach ($chevaux as $cheval): ?>
         <tr>
@@ -57,6 +74,16 @@
             <td><?php echo htmlspecialchars($cheval['nom_cheval']); ?></td>
             <td><?php echo htmlspecialchars($cheval['dateNaissance_cheval']); ?></td>
             <td><?php echo htmlspecialchars($cheval['race_cheval']); ?></td>
+            <td>
+                <a href="cChevaux.php?action=modifier&ifce=<?php echo $cheval['IFCE']; ?>" class="btn btn-warning">
+                    Modifier
+                </a>
+                <a href="cChevaux.php?action=supprimer&ifce=<?php echo $cheval['IFCE']; ?>" 
+                   class="btn btn-danger" 
+                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cheval ?')">
+                    Supprimer
+                </a>
+            </td>
         </tr>
         <?php endforeach; ?>
     </table>

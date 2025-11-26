@@ -11,7 +11,8 @@ if (!isset($_SESSION['utilisateur'])) {
 
 $action = $_POST['action'] ?? $_GET['action'] ?? 'liste';
 
-if ($action === 'ajouter' && !estGestionnaireHippodrome()) {
+// Seuls les gestionnaires d'hippodrome peuvent créer/modifier/supprimer des courses
+if (in_array($action, ['ajouter', 'modifierCourse', 'mettreAJourCourse', 'supprimer', 'creerParticipation', 'ajouterParticipation', 'supprimerParticipant']) && !estGestionnaireHippodrome()) {
     header('Location: cConnexion.php');
     exit();
 }
@@ -74,6 +75,19 @@ switch ($action) {
         }
         break;
         
+    case 'supprimerParticipant':
+        $idCourse = filter_input(INPUT_GET, 'idCourse', FILTER_VALIDATE_INT);
+        $idEquipe = filter_input(INPUT_GET, 'idEquipe', FILTER_VALIDATE_INT);
+        if ($idCourse && $idEquipe) {
+            if (supprimerParticipant($idCourse, $idEquipe)) {
+                header('Location: cCourses.php?action=gererParticipants&id=' . $idCourse . '&message=Participant supprimé avec succès');
+            } else {
+                header('Location: cCourses.php?action=gererParticipants&id=' . $idCourse . '&message=Erreur lors de la suppression');
+            }
+            exit();
+        }
+        break;
+        
     case 'saisirResultats':
         $idCourse = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         if ($idCourse) {
@@ -93,8 +107,51 @@ switch ($action) {
                     echo "OK";
                 }
             }
-        }  
+        }
         exit();
+        break;
+        
+    case 'modifierCourse':
+        $idCourse = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if ($idCourse) {
+            $course = obtenirCourseParId($idCourse);
+            if ($course) {
+                $hippodromes = obtenirHippodromes();
+                include '../views/vModifierCourse.php';
+                exit();
+            }
+        }
+        header('Location: cCourses.php');
+        break;
+        
+    case 'mettreAJourCourse':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $idCourse = filter_input(INPUT_POST, 'hdIdCourse', FILTER_VALIDATE_INT);
+            $dateCourse = filter_input(INPUT_POST, 'txtDateCourse', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $idHippodrome = filter_input(INPUT_POST, 'lstHippodrome', FILTER_VALIDATE_INT);
+            
+            if ($idCourse && $dateCourse && $idHippodrome) {
+                if (modifierCourse($idCourse, $dateCourse, $idHippodrome)) {
+                    header('Location: cCourses.php?message=Course modifiée avec succès');
+                } else {
+                    header('Location: cCourses.php?message=Erreur lors de la modification');
+                }
+                exit();
+            }
+        }
+        header('Location: cCourses.php');
+        break;
+        
+    case 'supprimer':
+        $idCourse = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if ($idCourse) {
+            if (supprimerCourse($idCourse)) {
+                header('Location: cCourses.php?message=Course supprimée avec succès');
+            } else {
+                header('Location: cCourses.php?message=Erreur lors de la suppression');
+            }
+            exit();
+        }
         break;
         
     default:

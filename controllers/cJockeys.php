@@ -37,6 +37,49 @@ switch ($action) {
         }
         break;
         
+    case 'supprimer':
+        $matricule = filter_input(INPUT_GET, 'matricule', FILTER_VALIDATE_INT);
+        if ($matricule) {
+            if (supprimerJockey($matricule)) {
+                header('Location: cJockeys.php?message=Jockey supprimé avec succès');
+            } else {
+                header('Location: cJockeys.php?message=Erreur lors de la suppression');
+            }
+            exit();
+        }
+        break;
+        
+    case 'modifier':
+        $matricule = filter_input(INPUT_GET, 'matricule', FILTER_VALIDATE_INT);
+        if ($matricule) {
+            $jockey = obtenirJockeyParMatricule($matricule);
+            if ($jockey) {
+                include '../views/vModifierJockey.php';
+                exit();
+            }
+        }
+        header('Location: cJockeys.php');
+        break;
+        
+    case 'mettreAJourJockey':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $matricule = filter_input(INPUT_POST, 'hdMatricule', FILTER_VALIDATE_INT);
+            $nom = filter_input(INPUT_POST, 'txtNom', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $dateNaissance = filter_input(INPUT_POST, 'txtDateNaissance', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $genre = filter_input(INPUT_POST, 'lstGenre', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            
+            if ($matricule && $nom && $dateNaissance && $genre) {
+                if (modifierJockey($matricule, $nom, $dateNaissance, $genre)) {
+                    header('Location: cJockeys.php?message=Jockey modifié avec succès');
+                } else {
+                    header('Location: cJockeys.php?message=Erreur lors de la modification');
+                }
+                exit();
+            }
+        }
+        header('Location: cJockeys.php');
+        break;
+        
     default:
         $jockeys = obtenirJockeys();
         include '../views/vJockeys.php';

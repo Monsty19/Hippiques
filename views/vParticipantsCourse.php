@@ -8,18 +8,32 @@
         table { border-collapse: collapse; width: 100%; margin: 20px 0; }
         th, td { border: 1px solid #ddd; padding: 8px; }
         th { background-color: #f2f2f2; }
-        .btn { padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; }
+        .btn { 
+            padding: 5px 10px; 
+            text-decoration: none; 
+            color: white; 
+            border-radius: 3px; 
+            margin: 2px;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-primary { background: #007bff; }
+        .btn-danger { background: #dc3545; }
     </style>
 </head>
 <body>
     <?php include 'vMenu.php'; ?>
     
-    <a href="cCourses.php" class="btn">← Retour aux courses</a>
+    <a href="cCourses.php" class="btn btn-primary">← Retour aux courses</a>
     
     <h1>Participants de la Course</h1>
     
+    <?php if (isset($_GET['message'])): ?>
+        <p style="color: green;"><?php echo htmlspecialchars($_GET['message']); ?></p>
+    <?php endif; ?>
+    
     <?php if (isset($_SESSION['type_utilisateur']) && $_SESSION['type_utilisateur'] == 0): ?>
-    <a href="cCourses.php?action=creerParticipation&id=<?php echo $idCourse; ?>" class="btn">
+    <a href="cCourses.php?action=creerParticipation&id=<?php echo $idCourse; ?>" class="btn btn-primary">
         + Ajouter un participant
     </a>
     <?php endif; ?>
@@ -34,6 +48,9 @@
                 <th>Cheval</th>
                 <th>Jockey</th>
                 <th>Temps</th>
+                <?php if (isset($_SESSION['type_utilisateur']) && $_SESSION['type_utilisateur'] == 0): ?>
+                    <th>Actions</th>
+                <?php endif; ?>
             </tr>
             <?php foreach ($participants as $participant): ?>
             <tr>
@@ -47,6 +64,15 @@
                         Non renseigné
                     <?php endif; ?>
                 </td>
+                <?php if (isset($_SESSION['type_utilisateur']) && $_SESSION['type_utilisateur'] == 0): ?>
+                <td>
+                    <a href="cCourses.php?action=supprimerParticipant&idCourse=<?php echo $idCourse; ?>&idEquipe=<?php echo $participant['id_equipe']; ?>" 
+                       class="btn btn-danger" 
+                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce participant ?')">
+                        Supprimer
+                    </a>
+                </td>
+                <?php endif; ?>
             </tr>
             <?php endforeach; ?>
         </table>

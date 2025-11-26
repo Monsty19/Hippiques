@@ -39,7 +39,7 @@
             <input type="number" id="txtCapacite" name="txtCapacite" value="<?php echo htmlspecialchars($hippodrome['capacite_hippodrome']); ?>" required>
         </div>
         
-        <input type="submit" value="Modifier l'hippodrome" class="btn btn-primary">
+        <input type="submit" value="Modifier l'hippodrome" class="btn btn-primary"> 
     </form>
     
     <?php include 'vFooter.php'; ?>

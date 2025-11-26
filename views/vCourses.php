@@ -38,7 +38,7 @@
         <p style="color: green;"><?php echo $message; ?></p>
     <?php endif; ?>
     
-    <?php if (isset($_SESSION['type_utilisateur']) && $_SESSION['type_utilisateur'] == 0): ?>
+    <?php if (isset($_SESSION['type_utilisateur']) && $_SESSION['type_utilisateur'] == 0): ?> 
     <h2>Ajouter une course</h2>
     <form method="post" action="cCourses.php">
         <input type="hidden" name="action" value="ajouter">

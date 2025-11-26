@@ -38,8 +38,8 @@ switch ($action) {
     case 'supprimer':
         $idHippodrome = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         if ($idHippodrome) {
-            // Vérifier d'abord si l'hippodrome peut être supprimé
-            if (!hippodromePeutEtreSupprime($idHippodrome)) {
+            
+            if (!hippodromePeutEtreSupprime($idHippodrome)) {  // code exécuté si l'hippodrome **ne peut pas être supprimé**
                 $nbCourses = obtenirNbCoursesHippodrome($idHippodrome);
                 header('Location: cHippodromes.php?message=Impossible de supprimer cet hippodrome : il y a ' . $nbCourses . ' course(s) associée(s)');
                 exit();
